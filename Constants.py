@@ -7,11 +7,15 @@ class Constants:
         MARGIN_BOTTOM = 10
         JUGADOR_WIDTH = 10
         JUGADOR_HEIGHT = 80
+        PILOTA_SIZE = 10
 
     class Colors:
         BACKGROUND = (0, 255, 255)
         RECTANGLE = (0, 255, 118)
         JUGADOR1_COLOR = (255, 0, 0)
         JUGADOR2_COLOR = (0, 0, 255)
+        PILOTA_COLOR = (255, 255, 255)
+
+
 
 

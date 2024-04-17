@@ -1,7 +1,9 @@
 import sys
 import pygame
+import math
 from Constants import Constants
 from Jugador import Jugador
+from Pilota import Pilota
 
 pygame.init()
 
@@ -10,7 +12,7 @@ rellotge = pygame.time.Clock()
 
 gameOver = False
 
-
+# Crear jugadores
 jugador1 = Jugador(Constants.Dimensions.MARGIN_TOP,
                    (Constants.Dimensions.HEIGHT - Constants.Dimensions.MARGIN_TOP - Constants.Dimensions.MARGIN_BOTTOM) / 2 - Constants.Dimensions.JUGADOR_HEIGHT / 2,
                    Constants.Dimensions.JUGADOR_WIDTH,
@@ -23,6 +25,9 @@ jugador2 = Jugador(Constants.Dimensions.WIDTH - Constants.Dimensions.MARGIN_BOTT
                    Constants.Dimensions.JUGADOR_HEIGHT,
                    Constants.Colors.JUGADOR2_COLOR)
 
+# Crear pilota
+pilota = Pilota()
+pilota.random_direction()  # Comenzar con una dirección aleatoria
 
 def PintaObjetec():
     finestraJoc.fill(Constants.Colors.BACKGROUND)
@@ -35,36 +40,53 @@ def PintaObjetec():
     pygame.draw.rect(finestraJoc, jugador1.color, (jugador1.posX, jugador1.posY, jugador1.width, jugador1.height))
     pygame.draw.rect(finestraJoc, jugador2.color, (jugador2.posX, jugador2.posY, jugador2.width, jugador2.height))
 
+    # Pintar pilota
+    pygame.draw.circle(finestraJoc, pilota.color, (int(pilota.posX), int(pilota.posY)), Constants.Dimensions.PILOTA_SIZE)
+
 
 def DetectaEvents():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
 
-
     teclas = pygame.key.get_pressed()
 
+    MueveJugador(jugador1, teclas, pygame.K_w, pygame.K_s)
+    MueveJugador(jugador2, teclas, pygame.K_UP, pygame.K_DOWN)
 
-    if teclas[pygame.K_w]:
-        jugador1.posY -= jugador1.velocidad
-    if teclas[pygame.K_s]:
-        jugador1.posY += jugador1.velocidad
+def MueveJugador(jugador, teclas, tecla_arriba, tecla_abajo):
+    if teclas[tecla_arriba]:
+        jugador.posY -= jugador.velocidad
+    if teclas[tecla_abajo]:
+        jugador.posY += jugador.velocidad
 
+    jugador.posY = max(Constants.Dimensions.MARGIN_TOP, min(jugador.posY, Constants.Dimensions.HEIGHT - Constants.Dimensions.MARGIN_BOTTOM - jugador.height))
 
-    if teclas[pygame.K_UP]:
-        jugador2.posY -= jugador2.velocidad
-    if teclas[pygame.K_DOWN]:
-        jugador2.posY += jugador2.velocidad
+def DetectaColisiones():
+    # Colisión con el borde superior e inferior
+    if pilota.posY <= Constants.Dimensions.MARGIN_TOP or pilota.posY >= Constants.Dimensions.HEIGHT - Constants.Dimensions.MARGIN_BOTTOM:
+        pilota.velY = -pilota.velY
 
+    # Colisión con los jugadores
+    if (jugador1.posX < pilota.posX + Constants.Dimensions.PILOTA_SIZE and
+            jugador1.posX + Constants.Dimensions.JUGADOR_WIDTH > pilota.posX and
+            jugador1.posY < pilota.posY + Constants.Dimensions.PILOTA_SIZE and
+            jugador1.posY + Constants.Dimensions.JUGADOR_HEIGHT > pilota.posY):
+        pilota.velX = -pilota.velX
 
-    jugador1.posY = max(Constants.Dimensions.MARGIN_TOP, min(jugador1.posY, Constants.Dimensions.HEIGHT - Constants.Dimensions.MARGIN_BOTTOM - jugador1.height))
-    jugador2.posY = max(Constants.Dimensions.MARGIN_TOP, min(jugador2.posY, Constants.Dimensions.HEIGHT - Constants.Dimensions.MARGIN_BOTTOM - jugador2.height))
-
+    if (jugador2.posX < pilota.posX + Constants.Dimensions.PILOTA_SIZE and
+            jugador2.posX + Constants.Dimensions.JUGADOR_WIDTH > pilota.posX and
+            jugador2.posY < pilota.posY + Constants.Dimensions.PILOTA_SIZE and
+            jugador2.posY + Constants.Dimensions.JUGADOR_HEIGHT > pilota.posY):
+        pilota.velX = -pilota.velX
 
 while not gameOver:
     PintaObjetec()
     DetectaEvents()
-
+    DetectaColisiones()
+    pilota.move()
     rellotge.tick(60)
     pygame.display.update()
+
+
 
