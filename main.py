@@ -1,6 +1,8 @@
 import sys
 import pygame
 import math
+import time
+import random
 from Constants import Constants
 from Jugador import Jugador
 from Pilota import Pilota
@@ -67,18 +69,26 @@ def DetectaColisiones():
     if pilota.posY <= Constants.Dimensions.MARGIN_TOP or pilota.posY >= Constants.Dimensions.HEIGHT - Constants.Dimensions.MARGIN_BOTTOM:
         pilota.velY = -pilota.velY
 
+        # Si la pelota sale del margen azul, reaparece en el centro y se mueve en dirección opuesta
+        if pilota.posX <= Constants.Dimensions.MARGIN_TOP or pilota.posX >= Constants.Dimensions.WIDTH - Constants.Dimensions.MARGIN_BOTTOM:
+            pilota.reset()
+            pilota.random_direction()
+            pilota.velX = -pilota.velX
+
     # Colisión con los jugadores
     if (jugador1.posX < pilota.posX + Constants.Dimensions.PILOTA_SIZE and
             jugador1.posX + Constants.Dimensions.JUGADOR_WIDTH > pilota.posX and
             jugador1.posY < pilota.posY + Constants.Dimensions.PILOTA_SIZE and
             jugador1.posY + Constants.Dimensions.JUGADOR_HEIGHT > pilota.posY):
         pilota.velX = -pilota.velX
+        pilota.increase_speed()
 
     if (jugador2.posX < pilota.posX + Constants.Dimensions.PILOTA_SIZE and
             jugador2.posX + Constants.Dimensions.JUGADOR_WIDTH > pilota.posX and
             jugador2.posY < pilota.posY + Constants.Dimensions.PILOTA_SIZE and
             jugador2.posY + Constants.Dimensions.JUGADOR_HEIGHT > pilota.posY):
         pilota.velX = -pilota.velX
+        pilota.increase_speed()
 
 while not gameOver:
     PintaObjetec()
@@ -87,6 +97,3 @@ while not gameOver:
     pilota.move()
     rellotge.tick(60)
     pygame.display.update()
-
-
-
