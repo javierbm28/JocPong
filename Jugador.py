@@ -10,6 +10,7 @@ class Jugador(ObjetoEscenario):
         self.width = width
         self.height = height
         self.velocidad = 5
+        self.puntos = 0
 
     def Pinta(self, superficie):
         pygame.draw.rect(superficie, self.color, (self.posX, self.posY, self.width, self.height))

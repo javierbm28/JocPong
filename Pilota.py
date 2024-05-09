@@ -5,8 +5,10 @@ from Constants import Constants
 from ObjetoEscenario import ObjetoEscenario
 
 class Pilota(ObjetoEscenario):
-    def __init__(self):
+    def __init__(self, jugador1, jugador2):
         super().__init__(Constants.Dimensions.WIDTH // 2, Constants.Dimensions.HEIGHT // 2, Constants.Colors.PILOTA_COLOR)
+        self.jugador1 = jugador1
+        self.jugador2 = jugador2
         self.velX = 0
         self.velY = 0
         self.size = Constants.Dimensions.PILOTA_SIZE
@@ -39,7 +41,11 @@ class Pilota(ObjetoEscenario):
             self.velY = -self.velY
 
         # Colisión con los bordes izquierdo y derecho
-        if self.posX - self.size <= Constants.Dimensions.MARGIN_TOP or self.posX + self.size >= Constants.Dimensions.WIDTH - Constants.Dimensions.MARGIN_BOTTOM:
+        if self.posX - self.size <= Constants.Dimensions.MARGIN_TOP:
+            self.jugador2.puntos += 1  # Usamos el atributo self.jugador2
+            self.reset()
+        elif self.posX + self.size >= Constants.Dimensions.WIDTH - Constants.Dimensions.MARGIN_BOTTOM:
+            self.jugador1.puntos += 1  # Usamos el atributo self.jugador1
             self.reset()
 
     def increase_speed(self):

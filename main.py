@@ -7,7 +7,11 @@ from Constants import Constants
 from Jugador import Jugador
 from Pilota import Pilota
 
+
 pygame.init()
+pygame.font.init()
+
+fontText = pygame.font.SysFont("monospace", 35)
 
 finestraJoc = pygame.display.set_mode((Constants.Dimensions.WIDTH, Constants.Dimensions.HEIGHT))
 rellotge = pygame.time.Clock()
@@ -28,8 +32,9 @@ jugador2 = Jugador(Constants.Dimensions.WIDTH - Constants.Dimensions.MARGIN_BOTT
                    Constants.Colors.JUGADOR2_COLOR)
 
 # Crear pilota
-pilota = Pilota()
+pilota = Pilota(jugador1, jugador2)
 pilota.random_direction()  # Comenzar con una dirección aleatoria
+
 
 def PintaObjetec():
     finestraJoc.fill(Constants.Colors.BACKGROUND)
@@ -42,6 +47,19 @@ def PintaObjetec():
     jugador1.Pinta(finestraJoc)
     jugador2.Pinta(finestraJoc)
     pilota.Pinta(finestraJoc)
+
+    # Preparar el texto con los puntos de cada jugador
+    textJugador1 = "Jugador 1: " + str(jugador1.puntos)
+    textJugador2 = "Jugador 2: " + str(jugador2.puntos)
+
+    # Renderizar y mostrar los puntos utilizando antialiasing y el color adecuado
+    etiquetaJugador1 = fontText.render(textJugador1, 1, Constants.Colors.JUGADOR1_COLOR)
+    etiquetaJugador2 = fontText.render(textJugador2, 1, Constants.Colors.JUGADOR2_COLOR)
+
+    # Situar las etiquetas en la pantalla
+    finestraJoc.blit(etiquetaJugador1, (10, 10))  # Posición arriba a la izquierda para el Jugador 1
+    finestraJoc.blit(etiquetaJugador2, (Constants.Dimensions.WIDTH - etiquetaJugador2.get_width() - 10,
+                                        10))  # Posición arriba a la derecha para el Jugador 2
 
 
 def DetectaEvents():
