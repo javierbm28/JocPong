@@ -5,4 +5,4 @@ class ObjetoEscenario:
         self.color = color
 
     def Pinta(self, superficie):
-        pass  # Esto se sobrescribirá en las subclases
+        pass

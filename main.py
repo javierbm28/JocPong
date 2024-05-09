@@ -61,6 +61,13 @@ def PintaObjetec():
     finestraJoc.blit(etiquetaJugador2, (Constants.Dimensions.WIDTH - etiquetaJugador2.get_width() - 10,
                                         10))  # Posición arriba a la derecha para el Jugador 2
 
+    if pilota.paused:
+        elapsed_time = (pygame.time.get_ticks() - pilota.pause_start_time) / 1000
+        remaining_time = max(0, pilota.pause_duration - int(elapsed_time))
+        countdown_text = fontText.render(str(remaining_time), True, (0, 0, 0))  # Cambio a color negro para visibilidad
+        text_rect = countdown_text.get_rect(center=(Constants.Dimensions.WIDTH / 2, Constants.Dimensions.HEIGHT / 2))
+        finestraJoc.blit(countdown_text, text_rect)
+
 
 def DetectaEvents():
     for event in pygame.event.get():
@@ -101,6 +108,8 @@ while not gameOver:
     PintaObjetec()
     DetectaEvents()
     DetectaColisiones()
-    pilota.MovimientoPilota()
+    pilota.update_after_pause()
+    if not pilota.paused:
+        pilota.MovimientoPilota()
     rellotge.tick(60)
     pygame.display.update()

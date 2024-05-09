@@ -15,6 +15,9 @@ class Pilota(ObjetoEscenario):
         self.velocitat_inicial = 5
         self.max_speed = 8
         self.random_direction()
+        self.paused = False
+        self.pause_start_time = None
+        self.pause_duration = 3
 
     def random_direction(self):
         angles = [45, 135, 225, 315]
@@ -28,12 +31,23 @@ class Pilota(ObjetoEscenario):
     def reset(self):
         self.posX = Constants.Dimensions.WIDTH // 2
         self.posY = Constants.Dimensions.HEIGHT // 2
-        self.random_direction()
+        self.paused = True
+        self.pause_start_time = pygame.time.get_ticks()
+        self.velX = 0
+        self.velY = 0
 
+    def update_after_pause(self):
+        if self.paused:
+            current_time = pygame.time.get_ticks()
+            if (current_time - self.pause_start_time) / 1000 >= self.pause_duration:
+                self.paused = False
+                self.random_direction()
+           
     def MovimientoPilota(self):
-        self.posX += self.velX
-        self.posY += self.velY
-        self.check_collision()
+        if not self.paused:
+            self.posX += self.velX
+            self.posY += self.velY
+            self.check_collision()
 
     def check_collision(self):
         # Colisión con los bordes superior e inferior
